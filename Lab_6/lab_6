@@ -1,1 +1,48 @@
 
+/* CREATE TABLE students (
+	s_id        SERIAL      PRIMARY KEY,
+	s_firstname VARCHAR(20) NOT NULL,
+	s_lastname  VARCHAR(20) NOT NULL,
+	s_email     VARCHAR(25) UNIQUE NOT NULL,
+	s_faculty   VARCHAR(50) NOT NULL
+);*/
+
+-- ALTER TABLE college_students
+-- RENAME TO students
+
+-- INSERT INTO students VALUES 
+-- (13122, 'Baitur', 'Boobekov', 'bb13122@auca.kg', 'Software Engineering')
+
+-- ALTER TABLE students
+-- ADD COLUMN s_age INT NOT NULL;
+
+-- SELECT * FROM students;
+
+-- ALTER TABLE students
+-- DROP COLUMN s_age;
+
+
+-- SELECT * FROM students;
+
+-- ALTER TABLE students
+-- ALTER COLUMN s_firstname TYPE TEXT;
+
+-- ALTER TABLE students
+-- ADD CONSTRAINT unique_s_email UNIQUE (s_email);
+
+/* ALTER TABLE students
+RENAME COLUMN s_email TO student_email;
+
+ALTER TABLE students
+RENAME TO college_students;*/
+
+/* CREATE TEMP TABLE applicants (
+	a_firstname VARCHAR(20) NOT NULL,
+	a_lastname  VARCHAR(20) NOT NULL,
+	a_email     VARCHAR(25) NOT NULL,
+	a_major     VARCHAR(20) NOT NULL
+)*/
+
+-- SELECT * FROM applicants;
+
+SELECT * FROM students;
