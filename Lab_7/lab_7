@@ -1,1 +1,33 @@
+/*CREATE TABLE college_students (
+	s_id    INT         PRIMARY KEY,
+	s_name  VARCHAR(25) NOT NULL,
+	s_email VARCHAR(50) UNIQUE NOT NULL
+);*/
 
+-- SELECT * FROM college_students;
+
+/*INSERT INTO college_students VALUES 
+(1234, 'Andrew', 'andrew_g@auca.kg'),
+(4321, 'Emma', 'emma_s@auca.kg')*/
+
+-- SELECT * FROM college_students;
+
+/*CREATE TABLE course_evaluation (
+	student_id INT,
+	course_id  VARCHAR(10),
+	semester   VARCHAR(20),
+	grade      CHAR(2),
+	feedback   VARCHAR(200),
+	PRIMARY KEY (student_id, course_id, semester, grade)
+);*/
+
+-- SELECT * FROM course_evaluation
+
+/*INSERT INTO course_evaluation (student_id, course_id, semester, grade, feedback) VALUES
+(1333, 'MAT340', '2026-Spring', 'A+', 'I loved the course!'),
+(1333, 'COM280', '2026-Spring', 'B',  'It was good'),
+(1333, 'SPO100', '2026-Spring', 'P',  'I decided to become a football player'),
+(1333, 'ART150', '2026-Spring', 'C',  'Well... I did nott like it that much'),
+(1333, 'COM270', '2026-Spring', 'A-', 'The final exam was quite hard');*/
+
+-- SELECT * FROM course_evaluation;
