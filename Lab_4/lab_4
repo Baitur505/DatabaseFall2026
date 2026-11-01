@@ -1,5 +1,5 @@
 CREATE TABLE students (
-  s_id      SERIAL PRIMARY KEY,
+	s_id      SERIAL PRIMARY KEY,
 	s_name    VARCHAR(100),
 	s_email   VARCHAR(100),
 	s_faculty VARCHAR(20)
