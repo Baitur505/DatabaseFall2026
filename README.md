@@ -2,6 +2,8 @@
 
 I will upload my lab assignments to this GitHub repository in order to fulfill the requirements of the Database (COM213) course
 
+# Repository Contents:
+
 | Lab | Topic |
 |---|---|
 | Lab 3 | Basic psql Commands |
