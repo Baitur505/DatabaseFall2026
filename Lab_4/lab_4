@@ -1,1 +1,20 @@
+CREATE TABLE students (
+  s_id      SERIAL PRIMARY KEY,
+	s_name    VARCHAR(100),
+	s_email   VARCHAR(100),
+	s_faculty VARCHAR(20)
+);
 
+INSERT INTO students (s_id, s_name, s_email, s_faculty) VALUES 
+(1, 'Alymbek', 'alymbek@example.com', 'COMSEH'), 
+(2, 'Timur'  , 'timur@example.com'  , 'MAT'   ),
+(3, 'Beka'   , 'beka@example.com'   , 'MAT'   );
+
+-- SELECT s_name, s_email FROM students WHERE s_faculty = 'MAT';
+-- SELECT s_name, s_email FROM students;
+-- SELECT * FROM students;
+-- SELECT s_id, s_faculty FROM students;
+-- SELECT s_name, s_email FROM students WHERE s_name = 'Timur';
+-- SELECT s_name, s_email FROM students ORDER BY s_name ASC;
+-- SELECT s_name, s_email FROM students LIMIT 2;
+-- SELECT s_id, s_email, s_faculty FROM students WHERE s_name = 'Alymbek';
