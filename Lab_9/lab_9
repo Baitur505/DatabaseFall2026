@@ -1,1 +1,84 @@
+/* CREATE TABLE students (
+	s_id   INT PRIMARY KEY,
+	s_name VARCHAR(20)
+);
 
+CREATE TABLE student_phones (
+	s_id         INT,
+	phone_number VARCHAR(15),
+	phone_type   VARCHAR(20),
+	PRIMARY KEY (s_id, phone_number),
+	FOREIGN KEY (s_id) REFERENCES students(s_id)
+); 
+
+CREATE TABLE courses (
+	c_id    INT PRIMARY KEY,
+	c_name  VARCHAR(50),
+	credits INT
+);
+
+CREATE TABLE enrollments (
+	s_id INT,
+	c_id INT,
+	grade CHAR(2),
+	PRIMARY KEY (s_id, c_id),
+	FOREIGN KEY (s_id) REFERENCES students(s_id),
+	FOREIGN KEY (c_id) REFERENCES courses(c_id)
+); */
+
+/* CREATE TABLE departments (
+	d_id INT PRIMARY KEY,
+	d_name VARCHAR(100),
+	d_head VARCHAR(100)
+)
+
+CREATE TABLE students (
+	s_id INT PRIMARY KEY,
+	name VARCHAR(20),
+	d_id INT,
+	FOREIGN KEY (d_id) REFERENCES departments(d_id)
+); */
+
+/* CREATE TABLE authors (
+	a_id SERIAL PRIMARY KEY,
+	first_name VARCHAR(20) NOT NULL,
+	last_name VARCHAR(20) NOT NULL,
+	birth_date DATE
+);
+
+CREATE TABLE books (
+	b_id  SERIAL       PRIMARY KEY,
+	title VARCHAR(100) NOT NULL,
+	isbn  VARCHAR(13)  UNIQUE,
+	publication_year INT,
+	available_copies INT DEFAULT 1
+);
+
+CREATE TABLE book_authors (
+	b_id INT,
+	a_id INT,
+	PRIMARY KEY (b_id, a_id)
+	FOREIGN KEY (b_id) REFERENCES books(b_id),
+	FOREIGN KEY (a_id) REFERENCES authors(a_id)
+); */
+
+/* CREATE TABLE members (
+	m_id       SERIAL PRIMARY KEY,
+	first_name VARCHAR(20),
+	last_name  VARCHAR(25),
+	email VARCHAR(50) UNIQUE NOT NULL,
+	phone VARCHAR(15),
+	m_date DATE DEFAULT CURRENT_DATE
+);
+
+CREATE TABLE loans (
+	l_id SERIAL PRIMARY KEY,
+	m_id INT NOT NULL,
+	b_id INT NOT NULL,
+	loan_date   DATE DEFAULT CURRENT_DATE,
+	due_date    DATE NOT NULL,
+	return_date DATE,
+	late_fee    DECIMAL(10,2) DEFAULT 0.00,
+	FOREIGN KEY (m_id) REFERENCES members(m_id),
+	FOREIGN KEY (b_id) REFERENCES books(b_id)
+); */
