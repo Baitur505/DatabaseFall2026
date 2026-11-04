@@ -1,1 +1,341 @@
+Last login: Wed Nov  4 23:25:37 on ttys000
+baitur@Baiturs-MacBook-Pro ~ % psql postgres
+psql (18.6 (Homebrew))
+Type "help" for help.
 
+postgres=# CREATE TABLE employees (
+    employee_id        SERIAL PRIMARY KEY,
+    first_name         VARCHAR(20),
+    department         VARCHAR(50),
+    salary             NUMERIC,
+    email              VARCHAR(50),
+    age                INT,
+    hire_date          DATE,
+    years_of_experience INT,
+    bonus              NUMERIC
+);
+
+CREATE TABLE department_sales (
+    department   VARCHAR(50),
+    sales_amount NUMERIC
+);
+
+CREATE TABLE daily_sales (
+    sale_date DATE,
+    amount    NUMERIC
+);
+
+CREATE TABLE employee_skills (
+    employee_id INT,
+    skill_name  VARCHAR(20)
+);
+
+CREATE TABLE products (
+    category VARCHAR(20),
+    price    NUMERIC
+);
+
+CREATE TABLE product_reviews (
+    product_id INT,
+    rating     NUMERIC
+);
+
+INSERT INTO employees (first_name, department, salary, email, age, hire_date, years_of_experience, bonus) VALUES
+('Aibek',   'Engineering', 85000,  'aibek@example.com',    29, '2023-04-10', 5,  4000),
+('Bermet',  'Engineering', 90000,  'bermet@example.com',   32, '2021-02-14', 8,  NULL),
+('Ulan',    'Sales',       62000,  NULL,                   38, '2019-10-05', 12, 2500),
+('Cholpon', 'Sales',       58000,  'cholpon@example.com',  26, '2024-01-10', 3,  1500),
+('Timur',   'Engineering', 105000, 'timur@example.com',    41, '2014-06-20', 16, 9000),
+('Ainura',  'HR',          72000,  'ainura@example.com',   50, '2017-03-12', 22, NULL),
+('Samat',   'Engineering', 87000,  'samat@example.com',    30, '2022-08-18', 6,  3500);
+
+INSERT INTO department_sales (department, sales_amount) VALUES 
+('Hardware', 18000),
+('Hardware', 22000), 
+('Software', 35000), 
+('Software', 45000);
+
+INSERT INTO daily_sales (sale_date, amount) VALUES 
+('2023-02-10', 1200), 
+('2023-03-15', 1600), 
+('2023-05-20', 2100), 
+('2024-02-01', 2600);
+
+INSERT INTO employee_skills (employee_id, skill_name) VALUES 
+(1, 'Python'), 
+(1, 'SQL'), 
+(2, 'Java'), 
+(2, 'Docker'), 
+(3, 'Negotiation');
+
+INSERT INTO products (category, price) VALUES 
+('Electronics', 450), 
+('Electronics', 750), 
+('Books',       25), 
+('Books',       35);
+
+INSERT INTO product_reviews (product_id, rating) VALUES 
+(1, 4.6), 
+(1, 4.9), 
+(1, 4.1), 
+(1, 4.7), 
+(1, 4.3), 
+(1, 4.8),
+(1, 5.0), 
+(1, 4.2), 
+(1, 4.9), 
+(1, 4.5), 
+(2, 3.2), 
+(2, 2.5);
+
+SELECT COUNT(*) AS total_employees FROM employees;
+
+SELECT COUNT(email) AS employees_with_email FROM employees;
+
+SELECT COUNT(DISTINCT department) AS unique_departments FROM employees;
+
+SELECT SUM(salary) AS total_salaries FROM employees;
+
+SELECT department, SUM(sales_amount) AS total_sales FROM department_sales GROUP BY department;
+
+SELECT AVG(salary) AS average_salary FROM employees;
+
+SELECT department, AVG(age) AS avg_age FROM employees GROUP BY department;
+
+SELECT MAX(salary) AS highest_salary, MIN(salary) AS lowest_salary FROM employees;
+
+SELECT department, MAX(hire_date) AS latest_hire FROM employees GROUP BY department;
+
+SELECT department, STRING_AGG(first_name, ', ') AS employee_names FROM employees GROUP BY department;
+
+SELECT employee_id, STRING_AGG(skill_name, ', ' ORDER BY skill_name) AS skills FROM employee_skills GROUP BY employee_id;
+
+SELECT department, ARRAY_AGG(salary) AS salary_array FROM employees GROUP BY department;
+
+SELECT department, ARRAY_AGG(first_name ORDER BY first_name) AS employees FROM employees GROUP BY department;
+
+SELECT department, STDDEV(salary) AS salary_std_dev, VARIANCE(salary) AS salary_variance FROM employees GROUP BY department;
+
+SELECT CORR(years_of_experience, salary) AS experience_salary_correlation FROM employees;
+
+SELECT category, COUNT(*) AS number_of_products, SUM(price) AS total_value, AVG(price) AS average_price FROM products GROUP BY category;
+
+SELECT EXTRACT(YEAR FROM sale_date) AS year, EXTRACT(QUARTER FROM sale_date) AS quarter, COUNT(*) AS total_sales, SUM(amount) AS total_revenue 
+FROM daily_sales GROUP BY EXTRACT(YEAR FROM sale_date), EXTRACT(QUARTER FROM sale_date) ORDER BY year, quarter;
+
+SELECT 
+    CASE 
+        WHEN age < 30 THEN 'Under 30'
+        WHEN age BETWEEN 30 AND 50 THEN '30-50'
+        ELSE 'Over 50'
+    END AS age_group,
+    COUNT(*) AS employee_count, AVG(salary) AS avg_salary 
+FROM employees 
+GROUP BY 
+    CASE 
+        WHEN age < 30 THEN 'Under 30'
+        WHEN age BETWEEN 30 AND 50 THEN '30-50'
+        ELSE 'Over 50'
+    END;
+
+SELECT department, COUNT(*) AS employee_count FROM employees GROUP BY department HAVING COUNT(*) > 5;
+
+SELECT product_id, AVG(rating) AS avg_rating, COUNT(*) AS review_count 
+FROM product_reviews GROUP BY product_id HAVING AVG(rating) > 4.0 AND COUNT(*) >= 10;
+
+SELECT department, AVG(salary) AS dept_avg_salary FROM employees GROUP BY department;
+
+SELECT employee_id, first_name, department, salary, AVG(salary) OVER (PARTITION BY department) AS dept_avg_salary FROM employees;
+
+SELECT COUNT(*) AS total_rows, COUNT(email) AS non_null_emails, COUNT(*) - COUNT(email) AS null_emails FROM employees;
+
+SELECT SUM(bonus) AS total_bonus, AVG(bonus) AS avg_bonus, COUNT(bonus) AS employees_with_bonus FROM employees;
+
+SELECT department, COUNT(*) AS employee_count, MIN(salary) AS min_salary, MAX(salary) AS max_salary, AVG(salary) AS avg_salary, STDDEV(salary) AS salary_std_dev 
+FROM employees GROUP BY department ORDER BY avg_salary DESC;
+
+SELECT department, COUNT(*) AS total_employees, COUNT(CASE WHEN salary > 50000 THEN 1 END) AS high_earners, COUNT(CASE WHEN hire_date > '2023-01-01' THEN 1 END) AS recent_hires 
+FROM employees GROUP BY department;
+
+SELECT department, COUNT(*) AS dept_count, COUNT(*)::FLOAT / (SELECT COUNT(*) FROM employees) * 100 AS percentage 
+FROM employees GROUP BY department ORDER BY percentage DESC;
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 7
+INSERT 0 4
+INSERT 0 4
+INSERT 0 5
+INSERT 0 4
+INSERT 0 12
+ total_employees 
+-----------------
+               7
+(1 row)
+
+ employees_with_email 
+----------------------
+                    6
+(1 row)
+
+ unique_departments 
+--------------------
+                  3
+(1 row)
+
+ total_salaries 
+----------------
+         559000
+(1 row)
+
+ department | total_sales 
+------------+-------------
+ Hardware   |       40000
+ Software   |       80000
+(2 rows)
+
+   average_salary   
+--------------------
+ 79857.142857142857
+(1 row)
+
+ department  |       avg_age       
+-------------+---------------------
+ Engineering | 33.0000000000000000
+ Sales       | 32.0000000000000000
+ HR          | 50.0000000000000000
+(3 rows)
+
+ highest_salary | lowest_salary 
+----------------+---------------
+         105000 |         58000
+(1 row)
+
+ department  | latest_hire 
+-------------+-------------
+ Engineering | 2023-04-10
+ Sales       | 2024-01-10
+ HR          | 2017-03-12
+(3 rows)
+
+ department  |       employee_names        
+-------------+-----------------------------
+ Engineering | Aibek, Bermet, Timur, Samat
+ Sales       | Ulan, Cholpon
+ HR          | Ainura
+(3 rows)
+
+ employee_id |    skills    
+-------------+--------------
+           1 | Python, SQL
+           2 | Docker, Java
+           3 | Negotiation
+(3 rows)
+
+ department  |        salary_array        
+-------------+----------------------------
+ Engineering | {85000,90000,105000,87000}
+ Sales       | {62000,58000}
+ HR          | {72000}
+(3 rows)
+
+ department  |         employees          
+-------------+----------------------------
+ Engineering | {Aibek,Bermet,Samat,Timur}
+ HR          | {Ainura}
+ Sales       | {Cholpon,Ulan}
+(3 rows)
+
+ department  |  salary_std_dev   |    salary_variance    
+-------------+-------------------+-----------------------
+ Engineering | 9069.178573608527 | 82250000.000000000000
+ Sales       | 2828.427124746190 |  8000000.000000000000
+ HR          |                   |                      
+(3 rows)
+
+ experience_salary_correlation 
+-------------------------------
+           0.14582819892327595
+(1 row)
+
+  category   | number_of_products | total_value |    average_price     
+-------------+--------------------+-------------+----------------------
+ Electronics |                  2 |        1200 | 600.0000000000000000
+ Books       |                  2 |          60 |  30.0000000000000000
+(2 rows)
+
+ year | quarter | total_sales | total_revenue 
+------+---------+-------------+---------------
+ 2023 |       1 |           2 |          2800
+ 2023 |       2 |           1 |          2100
+ 2024 |       1 |           1 |          2600
+(3 rows)
+
+ age_group | employee_count |     avg_salary     
+-----------+----------------+--------------------
+ Under 30  |              2 | 71500.000000000000
+ 30-50     |              5 | 83200.000000000000
+(2 rows)
+
+ department | employee_count 
+------------+----------------
+(0 rows)
+
+ product_id |     avg_rating     | review_count 
+------------+--------------------+--------------
+          1 | 4.6000000000000000 |           10
+(1 row)
+
+ department  |  dept_avg_salary   
+-------------+--------------------
+ Engineering | 91750.000000000000
+ Sales       | 60000.000000000000
+ HR          | 72000.000000000000
+(3 rows)
+
+ employee_id | first_name | department  | salary |  dept_avg_salary   
+-------------+------------+-------------+--------+--------------------
+           7 | Samat      | Engineering |  87000 | 91750.000000000000
+           2 | Bermet     | Engineering |  90000 | 91750.000000000000
+           1 | Aibek      | Engineering |  85000 | 91750.000000000000
+           5 | Timur      | Engineering | 105000 | 91750.000000000000
+           6 | Ainura     | HR          |  72000 | 72000.000000000000
+           4 | Cholpon    | Sales       |  58000 | 60000.000000000000
+           3 | Ulan       | Sales       |  62000 | 60000.000000000000
+(7 rows)
+
+ total_rows | non_null_emails | null_emails 
+------------+-----------------+-------------
+          7 |               6 |           1
+(1 row)
+
+ total_bonus |       avg_bonus       | employees_with_bonus 
+-------------+-----------------------+----------------------
+       20500 | 4100.0000000000000000 |                    5
+(1 row)
+
+ department  | employee_count | min_salary | max_salary |     avg_salary     |  salary_std_dev   
+-------------+----------------+------------+------------+--------------------+-------------------
+ Engineering |              4 |      85000 |     105000 | 91750.000000000000 | 9069.178573608527
+ HR          |              1 |      72000 |      72000 | 72000.000000000000 |                  
+ Sales       |              2 |      58000 |      62000 | 60000.000000000000 | 2828.427124746190
+(3 rows)
+
+ department  | total_employees | high_earners | recent_hires 
+-------------+-----------------+--------------+--------------
+ Engineering |               4 |            4 |            1
+ Sales       |               2 |            2 |            1
+ HR          |               1 |            1 |            0
+(3 rows)
+
+ department  | dept_count |     percentage     
+-------------+------------+--------------------
+ Engineering |          4 |  57.14285714285714
+ Sales       |          2 |  28.57142857142857
+ HR          |          1 | 14.285714285714285
+(3 rows)
+
+postgres=# 
