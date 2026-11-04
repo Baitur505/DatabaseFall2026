@@ -1,1 +1,32 @@
+Last login: Wed Nov  4 22:04:53 on ttys000
+baitur@Baiturs-MacBook-Pro ~ % psql postgres
+psql (18.6 (Homebrew))
+Type "help" for help.
+
+postgres=# \dt
+               List of tables
+ Schema |       Name       | Type  | Owner  
+--------+------------------+-------+--------
+ public | college_students | table | baitur
+ public | departments      | table | baitur
+ public | employees        | table | baitur
+ public | products         | table | baitur
+(4 rows)
+
+postgres=# \d
+                     List of relations
+ Schema |             Name              |   Type   | Owner  
+--------+-------------------------------+----------+--------
+ public | college_students              | table    | baitur
+ public | departments                   | table    | baitur
+ public | departments_department_id_seq | sequence | baitur
+ public | employees                     | table    | baitur
+ public | employees_employee_id_seq     | sequence | baitur
+ public | products                      | table    | baitur
+ public | products_product_id_seq       | sequence | baitur
+(7 rows)
+
+postgres=# 
+
+P.S. I dropped all of the tables from the previous labworks, hence why my ER diagram in pgadmin4 is empty
 
