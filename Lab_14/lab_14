@@ -1,1 +1,311 @@
+Last login: Wed Nov  4 23:26:39 on ttys000
+%                                                                                                        baitur@Baiturs-MacBook-Pro ~ % psql postgres
+psql (18.6 (Homebrew))
+Type "help" for help.
 
+postgres=# CREATE TABLE clients (
+    client_id   SERIAL PRIMARY KEY,
+    client_name VARCHAR(100),
+    email       VARCHAR(100)
+);
+
+CREATE TABLE orders (
+    order_id     SERIAL PRIMARY KEY,
+    client_id    INT REFERENCES clients(client_id),
+    order_date   DATE,
+    total_amount DECIMAL(10,2)
+);
+
+CREATE TABLE products (
+    product_id   SERIAL PRIMARY KEY,
+    product_name VARCHAR(100),
+    price        DECIMAL(10,2)
+);
+
+CREATE TABLE order_items (
+    order_id   INT REFERENCES orders(order_id),
+    product_id INT REFERENCES products(product_id),
+    quantity   INT
+);
+
+CREATE TABLE staff (
+    staff_id   SERIAL PRIMARY KEY,
+    staff_name VARCHAR(100),
+    manager_id INT REFERENCES staff(staff_id)
+);
+
+CREATE TABLE users (
+    user_id  SERIAL PRIMARY KEY,
+    username VARCHAR(50)
+);
+
+CREATE TABLE user_profiles (
+    user_id    INT PRIMARY KEY REFERENCES users(user_id),
+    first_name VARCHAR(50),
+    last_name  VARCHAR(50),
+    phone      VARCHAR(20)
+);
+
+CREATE TABLE authors (
+    author_id   SERIAL PRIMARY KEY,
+    author_name VARCHAR(100)
+);
+
+CREATE TABLE books (
+    book_id          SERIAL PRIMARY KEY,
+    author_id        INTEGER REFERENCES authors(author_id),
+    title            VARCHAR(100),
+    publication_year INT
+);
+
+CREATE TABLE students (
+    student_id   SERIAL PRIMARY KEY,
+    student_name VARCHAR(100)
+);
+
+CREATE TABLE courses (
+    course_id   SERIAL PRIMARY KEY,
+    course_name VARCHAR(100)
+);
+
+CREATE TABLE enrollments (
+    student_id      INT REFERENCES students(student_id),
+    course_id       INT REFERENCES courses(course_id),
+    enrollment_date DATE,
+    grade           CHAR(2)
+);
+
+INSERT INTO clients (client_name, email) VALUES 
+('Keanu',    'keanu@email.com'), 
+('Morgan',   'morgan@email.com'), 
+('Scarlett', 'scarlett@email.com');
+
+INSERT INTO orders (client_id, order_date, total_amount) VALUES 
+(1,    '2024-01-15', 150.00), 
+(2,    '2024-02-20', 200.00), 
+(NULL, '2024-03-01', 50.00);
+
+INSERT INTO products (product_name, price) VALUES 
+('Laptop', 1000.00), 
+('Mouse',  25.00);
+
+INSERT INTO order_items (order_id, product_id, quantity) VALUES 
+(1, 1, 1), 
+(1, 2, 2), 
+(2, 2, 1);
+
+INSERT INTO staff (staff_name, manager_id) VALUES 
+('Clooney', NULL), 
+('Keanu',   1), 
+('Morgan',  1);
+
+INSERT INTO users (username) VALUES 
+('admin'), 
+('guest');
+
+INSERT INTO user_profiles (user_id, first_name, last_name, phone) VALUES 
+(1, 'Super', 'Admin', '555-0000');
+
+INSERT INTO authors (author_name) VALUES 
+('Tolkien'), 
+('Sanderson');
+
+INSERT INTO books (author_id, title, publication_year) VALUES 
+(1, 'The Hobbit', 1937), 
+(1, 'Fellowship', 1954), 
+(2, 'Mistborn',   2006);
+
+INSERT INTO students (student_name) VALUES 
+('Keanu'), 
+('Morgan');
+
+INSERT INTO courses (course_name) VALUES 
+('Math'), 
+('History');
+
+INSERT INTO enrollments (student_id, course_id, enrollment_date, grade) VALUES 
+(1, 1, '2024-01-01', 'A'), 
+(1, 2, '2024-01-01', 'B'), 
+(2, 1, '2024-01-01', NULL);
+
+SELECT c.client_name, c.email, o.order_date, o.total_amount FROM clients c 
+INNER JOIN orders o ON c.client_id = o.client_id;
+
+SELECT c.client_name, c.email, o.order_date, o.total_amount FROM clients c 
+LEFT JOIN orders o ON c.client_id = o.client_id;
+
+SELECT c.client_name, c.email, o.order_date, o.total_amount FROM clients c 
+RIGHT JOIN orders o ON c.client_id = o.client_id;
+
+SELECT c.client_name, c.email, o.order_date, o.total_amount FROM clients c 
+FULL OUTER JOIN orders o ON c.client_id = o.client_id;
+
+SELECT c.client_name, p.product_name FROM clients c 
+CROSS JOIN products p;
+
+SELECT c.client_name, o.order_date, oi.quantity, p.product_name, p.price FROM clients c 
+INNER JOIN orders o ON c.client_id = o.client_id 
+INNER JOIN order_items oi ON o.order_id = oi.order_id 
+INNER JOIN products p ON oi.product_id = p.product_id;
+
+SELECT e1.staff_name AS staff_member, e2.staff_name AS manager FROM staff e1 
+LEFT JOIN staff e2 ON e1.manager_id = e2.staff_id;
+
+SELECT c.client_name, o.order_date, o.total_amount FROM clients c 
+INNER JOIN orders o ON c.client_id = o.client_id 
+WHERE o.order_date >= '2024-01-01' AND o.total_amount > 100;
+
+SELECT u.username, up.first_name, up.last_name, up.phone FROM users u 
+LEFT JOIN user_profiles up ON u.user_id = up.user_id;
+
+SELECT a.author_name, b.title, b.publication_year FROM authors a 
+INNER JOIN books b ON a.author_id = b.author_id 
+ORDER BY a.author_name, b.publication_year;
+
+SELECT s.student_name, c.course_name, e.enrollment_date, e.grade FROM students s 
+INNER JOIN enrollments e ON s.student_id = e.student_id 
+INNER JOIN courses c ON e.course_id = c.course_id 
+WHERE e.grade IS NOT NULL 
+ORDER BY s.student_name, c.course_name;
+
+CREATE INDEX idx_orders_client_id ON orders(client_id);
+CREATE INDEX idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX idx_order_items_product_id ON order_items(product_id);
+
+SELECT c.client_name, o.order_date FROM clients c, orders o;
+
+SELECT c.client_name, o.order_date FROM clients c 
+INNER JOIN orders o ON c.client_id = o.client_id;
+
+SELECT c.client_name FROM clients c 
+LEFT JOIN orders o ON c.client_id = o.client_id 
+WHERE o.client_id IS NULL;
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 3
+INSERT 0 3
+INSERT 0 2
+INSERT 0 3
+INSERT 0 3
+INSERT 0 2
+INSERT 0 1
+INSERT 0 2
+INSERT 0 3
+INSERT 0 2
+INSERT 0 2
+INSERT 0 3
+ client_name |      email       | order_date | total_amount 
+-------------+------------------+------------+--------------
+ Keanu       | keanu@email.com  | 2024-01-15 |       150.00
+ Morgan      | morgan@email.com | 2024-02-20 |       200.00
+(2 rows)
+
+ client_name |       email        | order_date | total_amount 
+-------------+--------------------+------------+--------------
+ Keanu       | keanu@email.com    | 2024-01-15 |       150.00
+ Morgan      | morgan@email.com   | 2024-02-20 |       200.00
+ Scarlett    | scarlett@email.com |            |             
+(3 rows)
+
+ client_name |      email       | order_date | total_amount 
+-------------+------------------+------------+--------------
+ Keanu       | keanu@email.com  | 2024-01-15 |       150.00
+ Morgan      | morgan@email.com | 2024-02-20 |       200.00
+             |                  | 2024-03-01 |        50.00
+(3 rows)
+
+ client_name |       email        | order_date | total_amount 
+-------------+--------------------+------------+--------------
+ Keanu       | keanu@email.com    | 2024-01-15 |       150.00
+ Morgan      | morgan@email.com   | 2024-02-20 |       200.00
+             |                    | 2024-03-01 |        50.00
+ Scarlett    | scarlett@email.com |            |             
+(4 rows)
+
+ client_name | product_name 
+-------------+--------------
+ Keanu       | Laptop
+ Morgan      | Laptop
+ Scarlett    | Laptop
+ Keanu       | Mouse
+ Morgan      | Mouse
+ Scarlett    | Mouse
+(6 rows)
+
+ client_name | order_date | quantity | product_name |  price  
+-------------+------------+----------+--------------+---------
+ Keanu       | 2024-01-15 |        1 | Laptop       | 1000.00
+ Keanu       | 2024-01-15 |        2 | Mouse        |   25.00
+ Morgan      | 2024-02-20 |        1 | Mouse        |   25.00
+(3 rows)
+
+ staff_member | manager 
+--------------+---------
+ Clooney      | 
+ Keanu        | Clooney
+ Morgan       | Clooney
+(3 rows)
+
+ client_name | order_date | total_amount 
+-------------+------------+--------------
+ Keanu       | 2024-01-15 |       150.00
+ Morgan      | 2024-02-20 |       200.00
+(2 rows)
+
+ username | first_name | last_name |  phone   
+----------+------------+-----------+----------
+ admin    | Super      | Admin     | 555-0000
+ guest    |            |           | 
+(2 rows)
+
+ author_name |   title    | publication_year 
+-------------+------------+------------------
+ Sanderson   | Mistborn   |             2006
+ Tolkien     | The Hobbit |             1937
+ Tolkien     | Fellowship |             1954
+(3 rows)
+
+ student_name | course_name | enrollment_date | grade 
+--------------+-------------+-----------------+-------
+ Keanu        | History     | 2024-01-01      | B 
+ Keanu        | Math        | 2024-01-01      | A 
+(2 rows)
+
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+ client_name | order_date 
+-------------+------------
+ Keanu       | 2024-01-15
+ Keanu       | 2024-02-20
+ Keanu       | 2024-03-01
+ Morgan      | 2024-01-15
+ Morgan      | 2024-02-20
+ Morgan      | 2024-03-01
+ Scarlett    | 2024-01-15
+ Scarlett    | 2024-02-20
+ Scarlett    | 2024-03-01
+(9 rows)
+
+ client_name | order_date 
+-------------+------------
+ Keanu       | 2024-01-15
+ Morgan      | 2024-02-20
+(2 rows)
+
+ client_name 
+-------------
+ Scarlett
+(1 row)
+
+postgres=# 
